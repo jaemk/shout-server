@@ -46,13 +46,15 @@ async def handle(request):
             return web.Response(text=resp)
 
 
-async def sock(request):
+async def socket_handle(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
     async for msg in ws:
         if msg.type == WSMsgType.CLOSED:
             await ws.close()
-        if msg.type == WSMsgType.TEXT:
+        elif msg.type == WSMsgType.ERROR:
+            socket_log.error(f'ws connection closed with error: {ws.exception()}')
+        elif msg.type == WSMsgType.TEXT:
             data = json.loads(msg.data)
             sock_id = data.get('init_for')
             if sock_id:
@@ -72,9 +74,9 @@ async def sock(request):
             subscribers = request.app['sockets'][sock_id]['subscribers']
             for sub in subscribers:
                 await sub.send_json({'data': data['data']})
+        else:
+            raise NotImplementedError(f'Unhandled `WSMsgType`: `{msg.type}`')
 
-        elif msg.type == WSMsgType.ERROR:
-            socket_log.error(f'ws connection closed with error: {ws.exception()}')
     socket_log.info('websocket closed')
     return ws
 
@@ -85,7 +87,7 @@ async def init_app():
     app['pool'] = await asyncpg.create_pool(database='shout', user='shout', password='shout', host='localhost')
     app.router.add_route('GET', '/{power:\d+}', handle)
     app.router.add_route('GET', '/', handle)
-    app.router.add_route('GET', '/ws', sock)
+    app.router.add_route('GET', '/ws', socket_handle)
     app.make_handler(access_log=access_log)
     app['sockets'] = {}
     app['ws_to_id'] = {}
