@@ -1,0 +1,2 @@
+six==1.10.0
+websocket-client==0.44.0
