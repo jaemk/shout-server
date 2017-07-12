@@ -77,6 +77,8 @@ def run(delay=DEFAULT_DELAY, command_args=None):
     command_done = True
     mutex.release()
 
+    ws.close()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
