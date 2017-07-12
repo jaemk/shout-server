@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+
+{% block head %}
+<script src="/static/js/stream.js"></script>
+{% endblock %}
+
+{% block content %}
+<input id="stream-id" type="hidden" value="{{stream_id}}"/>
+
+<div>
+    Listening to {{ stream_id }}: <span id="source-command"></span>
+</div>
+<div id="stream-data-container">
+    <div id="stream-data-table">
+        {#
+        <div class="stream-data-row">
+            <div class="stream-data-gutter">
+                <code class="code-line"> 1 </code>
+            </div>
+            <div class="stream-data">
+                <code class="code-line"> Output line one! </code>
+            </div>
+        </div>
+        #}
+    </div>
+
+    <code id="stream-message"> Connecting to stream... </code>
+</div>
+<div id="auto-scroll">
+    auto-scroll <span id="auto-scroll-off" class="hidden"> &#x25a1; </span> <span id="auto-scroll-on" class=""> &#x2713; </span>
+</div>
+{% endblock %}
