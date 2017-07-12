@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var sock = new WebSocket('ws://' + location.host + '/api/ws');
     var connectTimeout = 500;  // ms
     sock.onmessage = sockHandler;
+    sock.onclose = function() {
+        streamMsg.style.cssText = "";
+        streamMsg.innerText = "Connection Closed.";
+    };
 
     function send(obj) {
         sock.send(JSON.stringify(obj));
